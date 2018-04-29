@@ -1,0 +1,7 @@
+{
+  "home_bundle": {
+        "type":"json",
+        "resource":"HomeBundle/Resources/config/routes.json",
+        "prefix":"/"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "dbtype":"mysql",
+  "dbhost": "localhost",
+  "dbname": "trochilidae",
+  "dbuser": "root",
+  "dbpass": "",
+  "dbport":"3306",
+  "prefix":"",
+  "charset":"utf8"
+}

@@ -1,0 +1,34 @@
+{
+  "id":{
+    "type":"int",
+    "auto":true,
+    "key":true
+  },
+  "admin_name": {
+    "type":"varchar",
+    "length":"50",
+    "not_null":true
+  },
+  "password": {
+    "type":"varchar",
+    "length":"50",
+    "not_null":true
+  },
+  "avatar": {
+    "type":"varchar",
+    "length":"100"
+  },
+  "description": {
+    "type":"text"
+  },
+  "email": {
+    "type":"varchar",
+    "length":"50"
+  },
+  "login_time": {
+    "type":"datetime"
+  },
+  "status": {
+    "type":"int"
+  }
+}

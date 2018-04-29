@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+    define('TROCHICONSOLE',__DIR__);
+    define('TROCHI',TROCHICONSOLE.'/..');
+
+	require TROCHICONSOLE.'/../vendor/autoload.php';
+
+    use Trochilidae\bin\Lib\Console\TrochilidaeConsole;
+	/**
+	* 
+	*/
+
+	$tc=new TrochilidaeConsole();
+	$tc->run($argv,$argc);
+
+
