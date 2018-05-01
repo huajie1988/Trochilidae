@@ -10,6 +10,7 @@ namespace Trochilidae\bin\Core;
 
 
 use Trochilidae\bin\Common\Utils;
+use Trochilidae\bin\Lib\Route\RouteFactory;
 
 class Route
 {
@@ -45,22 +46,8 @@ class Route
             $configs=Config::getConfig('routes');
             $routes=[];
             foreach ($configs as $config) {
-
-                $routeFile=APP.'/'.$config->resource;
-
-                if (!is_file($routeFile)){
-                    throw new \Exception('The route file'.$config->resource.' not find');
-                }
-
-                $routeReals=json_decode(file_get_contents($routeFile));
-                foreach ($routeReals as $routeRealKey=>$routeReal) {
-                    $routeReal->path=str_replace('//','/',$config->prefix.$routeReal->path);
-                    $routes[$routeReal->path]=[
-                        'method'=>$routeReal->method,
-                        'name'=>$routeRealKey,
-                        'target'=>$routeReal->target,
-                    ];
-                }
+                new RouteFactory($config->type);
+                $routes = array_merge($routes,RouteFactory::create($config));
             }
             file_put_contents($fileName,json_encode($routes,JSON_UNESCAPED_SLASHES));
         }
@@ -89,7 +76,7 @@ class Route
        } 
 
        if(!$found){
-           throw new \Exception('The route '.$this->pathInfo.' not find');
+           throw new \Exception('The route '.$route->method.':'.$this->pathInfo.' not find');
        }
 
        return [

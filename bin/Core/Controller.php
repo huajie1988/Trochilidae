@@ -28,7 +28,6 @@ class Controller
             $route
         ];
 
-        include APP.'/'.$classFileName.'.php';
 
         $instance=Ioc::getInstance($className);
         if(!method_exists($instance,$methodName)){

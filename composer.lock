@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d74a6ca44ff2a1564067f5b3e8633c10",
+    "content-hash": "242528dbbd55af1b3711d1b706618214",
     "packages": [
         {
             "name": "catfan/medoo",

@@ -17,10 +17,13 @@
          "filp/whoops":"*",
          "twig/twig":"*"
     },
+    "require-dev": {
+    },
     "autoload": {
         "psr-4": {
             "Trochilidae\\bin\\": "bin/",
-            "HomeBundle\\": "src/HomeBundle/"
+            "HomeBundle\\": "src/HomeBundle/",
+            "AdminBundle\\": "src/AdminBundle/"
         }
     },
     "repositories": {

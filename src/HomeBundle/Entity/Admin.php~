@@ -1,5 +1,5 @@
 <?php
-namespace Trochilidae\src\HomeBundle\Entity;
+namespace HomeBundle\Entity;
 class Admin {
 	private $id;
 	private $admin_name;

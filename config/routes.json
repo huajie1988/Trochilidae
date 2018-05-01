@@ -3,5 +3,10 @@
         "type":"json",
         "resource":"HomeBundle/Resources/config/routes.json",
         "prefix":"/"
+  },
+  "admin_bundle":{
+    "type":"annotation",
+    "resource":"AdminBundle/Controller",
+    "prefix":"/admin"
   }
 }
