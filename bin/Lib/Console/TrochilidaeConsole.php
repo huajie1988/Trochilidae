@@ -31,14 +31,22 @@ class TrochilidaeConsole
     }
 
     private function help(){
+        $sting=<<<HELP
+        createEntity <path|file>
+        updateDataBase
+        clear
+        suggest
+HELP;
 
+        print_r($sting);
+        exit();
     }
 
     public function clear(){
         $this->doClear(TROCHICONSOLE.'/../storage',false);
     }
 
-    function doClear($dirname, $self = true) {
+    private function doClear($dirname, $self = true) {
         if (!file_exists($dirname)) {
             return false;
         }
@@ -138,5 +146,18 @@ class TrochilidaeConsole
 
     }
 
+    public function suggest(){
+        $script=TROCHICONSOLE.'/Lib/Console/phpcpd.phar';
+        $checkPath=TROCHI.'/src';
+        $storage=TROCHICONSOLE.'/../storage';
+        if(!is_dir($storage)){
+            mkdir($storage,0777,true);
+        }
+
+        $output = shell_exec('php '.$script.' '.$checkPath);
+        $script=TROCHICONSOLE.'/Lib/Console/phpmd.phar';
+        $output .= shell_exec('php '.$script.' '.$checkPath.' text codesize,unusedcode,naming');
+        file_put_contents($storage.'/suggest.txt',$output);
+    }
 
 }
