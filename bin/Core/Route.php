@@ -42,7 +42,7 @@ class Route
             mkdir($storagePath,0777,true);
         }
         $fileName=$storagePath.'routes.json';
-        if(!is_file($fileName) || DEBUG){
+        if(!is_file($fileName)){
             $configs=Config::getConfig('routes');
             $routes=[];
             foreach ($configs as $config) {
@@ -76,7 +76,7 @@ class Route
        } 
 
        if(!$found){
-           throw new \Exception('The route '.$route->method.':'.$this->pathInfo.' not find');
+           throw new \Exception('The route '.$this->method.':'.$this->pathInfo.' not find');
        }
 
        return [

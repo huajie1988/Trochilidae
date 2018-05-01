@@ -28,7 +28,7 @@
                     $logger=new Logger('Main process');
                     $logger->pushHandler(new StreamHandler($storagePath.'/'.date('YmdH').'.log', Logger::INFO));
                     $logger->addInfo('Main process start');
-                    self::process();
+                    self::process($logger);
                     $end_time = microtime(true);
 
                     $logger->addInfo('Main process stop',['executionTime(ms)'=>($end_time-$start_time)*1000]);
