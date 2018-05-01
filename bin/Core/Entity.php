@@ -9,14 +9,15 @@
 namespace Trochilidae\bin\Core;
 
 
-use function PHPSTORM_META\type;
+
 use Trochilidae\bin\Common\Utils;
 use Trochilidae\bin\Lib\Ioc;
 
 class Entity
 {
-    private $entity;
+    private $entity=null;
     private $model;
+    private $dbConfig=[];
     public function get($target){
         if(strstr('@',$target)){
             throw new \Exception('The  '.$target.' incorrectly formatting');
@@ -42,7 +43,8 @@ class Entity
     {
 
         // TODO: Implement __call() method.
-        $instance=Ioc::getInstance($this->model);
+
+        $instance=Ioc::getInstance($this->model,$this->dbConfig);
         if(!method_exists($instance,$name)){
             $ret = Ioc::make($instance,$this->model,$name,$arguments);
             $ret = $this->ArroytoEntity($ret);
@@ -54,8 +56,17 @@ class Entity
 
     }
 
-    public function ArroytoEntity($result){
-        $instance=Ioc::getInstance($this->entity);
+    public function ArroytoEntity($result,$entity=null){
+
+        if($this->entity==null){
+            throw new \Exception('The entity is null');
+            exit();
+        }
+
+        if($entity==null)
+            $entity=$this->entity;
+
+        $instance=Ioc::getInstance($entity);
         $utilsInstance=Utils::getInstance();
         $flag=false;
 
@@ -89,5 +100,11 @@ class Entity
             $array[$name]=$entity->$method();
         }
         return $array;
+    }
+
+    public function switchDataBase($dbConfig){
+        $database=Config::getOneConfig($dbConfig,'database');
+        $this->dbConfig=Model::switchDataBase($database,[]);
+        return $this;
     }
 }

@@ -15,10 +15,23 @@ class Model extends Medoo
 {
     private $table;
     private $entity;
-    public function __construct($options = null)
+    public function __construct($otherOptions = null)
     {
-        $database=Config::getConfig('database');
+
+        $database=current((array)Config::getConfig('database'));
         $this->entity=new Entity();
+        $options=$this::switchDataBase($database,$otherOptions);
+
+        parent::__construct($options);
+
+        $reflection = new \ReflectionClass($this);
+        $class=explode('\\',$reflection->getName());
+        $this->table=str_replace('Model','',$class[count($class)-1]);
+
+    }
+
+    public static function switchDataBase($database,$otherOptions){
+
 
         $options=[
             'database_type'=>$database->dbtype,
@@ -31,12 +44,13 @@ class Model extends Medoo
             'charset'=>$database->charset,
         ];
 
-        parent::__construct($options);
+        if($otherOptions!=null){
+            foreach ($otherOptions as $key=>$otherOption) {
+                $options[$key]=$otherOption;
+            }
+        }
 
-        $reflection = new \ReflectionClass($this);
-        $class=explode('\\',$reflection->getName());
-        $this->table=str_replace('Model','',$class[count($class)-1]);
-
+        return $options;
     }
 
     private function throwError(){

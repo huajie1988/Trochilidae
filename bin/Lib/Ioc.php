@@ -12,8 +12,13 @@ namespace Trochilidae\bin\Lib;
 class Ioc
 {
 
-    public static function getInstance($className) {
+    public static function getInstance($className,$params=null) {
         $paramArr = self::getMethodParams($className);
+
+        if($params!=null){
+            $paramArr=array_merge($paramArr,['other'=>$params]);
+        }
+
         return (new \ReflectionClass($className))->newInstanceArgs($paramArr);
     }
 
