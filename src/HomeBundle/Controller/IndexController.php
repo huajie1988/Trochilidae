@@ -31,14 +31,14 @@ class IndexController extends BaseController
          * @var $a User
          */
 //        $a=$em->get('User@HomeBundle')->create();
-        $a=$em->get('User@HomeBundle')->switchDataBase('test')->findById(4);
-        $a->setUserName('aaa');
-        $a->setAvatar('这是头像');
-        $a->setStatus(1);
-        $a->setDescription('sdsda');
-        $a->setEmail('dert');
-        $a->setPassword('sqw222');
-        $a->setLoginTime(date('Y-m-d H:i:s'));
+        $a=$em->get('User@HomeBundle')->switchDataBase('default')->findById(4);
+//        $a->setUserName('aaa');
+        $a->setAvatar('这是头像21');
+//        $a->setStatus(1);
+//        $a->setDescription('sdsda');
+//        $a->setEmail('dert');
+//        $a->setPassword('sqw222');
+//        $a->setLoginTime(date('Y-m-d H:i:s'));
         $ret=$em->save($a);
 
 //        $em=new Entity();

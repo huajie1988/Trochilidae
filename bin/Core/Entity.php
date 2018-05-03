@@ -70,8 +70,8 @@ class Entity
         $utilsInstance=Utils::getInstance();
         $flag=false;
 
-        if(is_null($result))
-            return $instance;
+//        if(is_null($result))
+//            return $instance;
 
         if(!is_array($result))
             return $result;
