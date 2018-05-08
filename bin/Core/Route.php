@@ -10,6 +10,7 @@ namespace Trochilidae\bin\Core;
 
 
 use Trochilidae\bin\Common\Utils;
+use Trochilidae\bin\Lib\Http;
 use Trochilidae\bin\Lib\Route\RouteFactory;
 
 class Route
@@ -42,7 +43,7 @@ class Route
             mkdir($storagePath,0777,true);
         }
         $fileName=$storagePath.'routes.json';
-        if(!is_file($fileName)){
+        if(!is_file($fileName) || DEBUG){
             $configs=Config::getConfig('routes');
             $routes=[];
             foreach ($configs as $config) {
@@ -76,7 +77,24 @@ class Route
        } 
 
        if(!$found){
-           throw new \Exception('The route '.$this->method.':'.$this->pathInfo.' not find');
+           if(DEBUG){
+               throw new \Exception('The route '.$this->method.':'.$this->pathInfo.' not find');
+           }else{
+                $http_exception_path=Config::getOneConfig('http_exception_path','site');
+                $status='404';
+
+                if(trim($http_exception_path)=='' || $http_exception_path==null){
+                    $path=BIN.'/Lib/Http/views';
+                }else{
+                    $path=APP.$http_exception_path;
+                }
+
+                $tpl=$path.'/'.$status.'.html.twig';
+                $controller=new Controller();
+                $view=$controller->renderOnly($tpl,['method'=>$this->method,'pathInfo'=>$this->pathInfo],true);
+                Http::response($status,$view);
+                exit();
+           }
        }
 
        return [

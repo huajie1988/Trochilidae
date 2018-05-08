@@ -21,8 +21,8 @@ class CreateEntityFactory implements CreateEntityFactoryInterface
         return $this->factory->createEntityFile($entityJson,$filePath);
     }
 
-    public function createEntitySQL($entityJson,$table,$result){
+    public function createEntitySQL($entityJson,$table,$result,$filePath){
         // TODO: Implement createEntitySQL() method.
-        return $this->factory->createEntitySQL($entityJson,$table,$result);
+        return $this->factory->createEntitySQL($entityJson,$table,$result,$filePath);
     }
 }

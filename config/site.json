@@ -2,5 +2,6 @@
   "view_mid_path": "/Resources/views",
   "cookie_expire": 86400,
   "cookie_path": "/",
-  "cookie_prefix": ""
+  "cookie_prefix": "",
+  "http_exception_path":""
 }

@@ -12,6 +12,7 @@ use Trochilidae\bin\Core\Model;
 use Trochilidae\bin\Core\Route;
 use HomeBundle\Entity\User;
 use Trochilidae\bin\Lib\Cookie;
+use Trochilidae\bin\Lib\Http;
 use Trochilidae\bin\Lib\Session;
 
 class IndexController extends BaseController
@@ -20,8 +21,10 @@ class IndexController extends BaseController
     public function indexAction(){
 //        $this->redirect('/test/id/3');
 //        print_r(Cookie::get('aa'));
-
+//        $this->ajaxResponse(100000,'sss');
         $this->render('index.html.twig@HomeBundle:Index',['string'=>'Hello World !']);
+//        $view=$this->renderOnly('index.html.twig@HomeBundle:Index',['string'=>'Hello World !']);
+//        Http::response(200,$view,['Cache-Control'=>'private, max-age=60']);
     }
 
     public function testAction(Route $route){

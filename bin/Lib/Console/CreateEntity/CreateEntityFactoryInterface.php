@@ -12,5 +12,5 @@ namespace Trochilidae\bin\Lib\Console\CreateEntity;
 interface CreateEntityFactoryInterface
 {
     public function createEntityFile($entityJson,$filePath);
-    public function createEntitySQL($entityJson,$table,$result);
+    public function createEntitySQL($entityJson,$table,$result,$filePath);
 }

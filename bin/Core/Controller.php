@@ -10,6 +10,7 @@ namespace Trochilidae\bin\Core;
 
 
 use Trochilidae\bin\Common\Utils;
+use Trochilidae\bin\Lib\Http;
 use Trochilidae\bin\Lib\Ioc;
 
 class Controller
@@ -40,35 +41,45 @@ class Controller
     }
 
     public function render($tpl,$data){
-        list($tplName,$pathName)=Utils::explodeStringBySymbol($tpl);
-        if($tplName=='' || $pathName==''){
-           throw new \Exception('The tpl'.$tpl.' incorrectly formatting');
-           exit();
-        }
+        echo $this->renderOnly($tpl,$data);
+    }
 
-        if(strpos($pathName,':')>0){
-            list($bundleName,$BundlepathName)=Utils::explodeStringBySymbol($pathName,":");
+    public function renderOnly($tpl,$data,$isReplease=false){
+       if(!$isReplease){
+           list($tplName,$pathName)=Utils::explodeStringBySymbol($tpl);
+           if($tplName=='' || $pathName==''){
+               throw new \Exception('The tpl'.$tpl.' incorrectly formatting');
+               exit();
+           }
 
-            if($bundleName=='' || $BundlepathName==''){
-                throw new \Exception('The tpl'.$tpl.' incorrectly formatting');
-                exit();
-            }
-        }else{
-            $bundleName=$pathName;
-            $BundlepathName='';
-        }
+           if(strpos($pathName,':')>0){
+               list($bundleName,$BundlepathName)=Utils::explodeStringBySymbol($pathName,":");
+
+               if($bundleName=='' || $BundlepathName==''){
+                   throw new \Exception('The tpl'.$tpl.' incorrectly formatting');
+                   exit();
+               }
+           }else{
+               $bundleName=$pathName;
+               $BundlepathName='';
+           }
 
 
-        $mid_path=Config::getOneConfig('view_mid_path','site');
+           $mid_path=Config::getOneConfig('view_mid_path','site');
 
-        $tplPath=APP.'/'.$bundleName.$mid_path;
+           $tplPath=APP.'/'.$bundleName.$mid_path;
 
-        $tplFile=($BundlepathName?'/':'').$BundlepathName.'/'.$tplName;
+           $tplFile=($BundlepathName?'/':'').$BundlepathName.'/'.$tplName;
 
-        if(!is_file($tplPath.'/'.$tplFile)){
-            throw new \Exception('The tpl file '.$tplPath.'not found');
-            exit();
-        }
+           if(!is_file($tplPath.'/'.$tplFile)){
+               throw new \Exception('The tpl file '.$tplPath.'not found');
+               exit();
+           }
+       }else{
+           $pathInfo=pathinfo($tpl);
+           $tplPath=$pathInfo['dirname'];
+           $tplFile='/'.$pathInfo['basename'];
+       }
 
         $loader = new \Twig_Loader_Filesystem($tplPath);
         $twig = new \Twig_Environment($loader, array(
@@ -77,20 +88,21 @@ class Controller
         ));
 
         $template = $twig->load($tplFile);
-        echo $template->render($data);
+        return $template->render($data);
     }
 
     public function redirect($url){
+       ob_clean();
        header('Location:'.$url);
        exit();
     }
 
-    public function ajaxResponse($code=200,$msg='',$data=[]){
-       echo json_encode([
+    public function ajaxResponse($code=10000,$msg='',$responseCode=200,$data=[]){
+       Http::response($responseCode,json_encode([
            'code'=>$code,
            'msg'=>$msg,
            'data'=>$data,
-       ]);
+       ]),['Content-Type'=>'application/json']);
        exit();
     }
 }

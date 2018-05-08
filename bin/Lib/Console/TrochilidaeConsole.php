@@ -126,7 +126,7 @@ HELP;
             }
 
             $cef=new CreateEntityFactory(new $class);
-            $entitySQLList[]=$cef->createEntitySQL($entityJson,$basename,$result);
+            $entitySQLList[]=$cef->createEntitySQL($entityJson,$basename,$result,$filePath);
             $entityClass=$cef->createEntityFile($entityJson,$filePath);
             $entityClassFile=pathinfo($filePath)['dirname'].'/'.ucfirst($basename).'.php';
             if(is_file($entityClassFile)){

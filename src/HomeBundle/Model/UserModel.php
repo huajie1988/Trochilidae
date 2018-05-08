@@ -18,13 +18,16 @@ class UserModel extends Model implements UserModelIfs
 {
     public function save(User $user)
     {
+        $this->pdo->beginTransaction();
         // TODO: Implement save() method.
+//        $this->updateRelationEntity(["User.id"=>['1',2,3]],["File.id"=>['1','2','3']]);
         if(intval($user->getId())==0){
            $ret = $this->insertByEntity($user);
            $user->setId($ret);
         }else{
            $this->updateByEntity($user,['id'=>$user->getId()]);
         }
+        $this->pdo->commit();
         return $user;
     }
 

@@ -13,7 +13,7 @@ use Trochilidae\bin\Core\Route;
 class IndexController extends Controller
 {
     /**
-     * @Route(path="/",method="GET")
+     * @Route(path="/",method="POST")
      */
     public function indexAction(){
         print_r('is Admin');

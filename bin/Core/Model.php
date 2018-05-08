@@ -10,6 +10,7 @@ namespace Trochilidae\bin\Core;
 
 
 use Medoo\Medoo;
+use Trochilidae\bin\Common\Utils;
 
 class Model extends Medoo
 {
@@ -97,6 +98,37 @@ class Model extends Medoo
 
     public function findOne($col,$where,$join=null){
         return current($this->find($col,$where,$join));
+    }
+
+    public function updateRelationEntity($sourceData,$relationData){
+
+        $sourceKey=current(array_keys($sourceData));
+        $relationKey=current(array_keys($relationData));
+        $sourceValue=$sourceData[$sourceKey];
+        $relationValue=$relationData[$relationKey];
+        $sourceCount=count($sourceValue);
+        $relationCount=count($relationValue);
+        list($sourceTable,$sourceField)=Utils::explodeStringBySymbol($sourceKey,'.');
+        list($relationTable,$relationField)=Utils::explodeStringBySymbol($relationKey,'.');
+        $table=$sourceTable.'_'.$relationTable;
+        //fitter some do not find data
+        $sourceData=$this->select($sourceTable,$sourceField,[$sourceField=>$sourceValue]);
+        $relationData=$this->select($relationTable,$relationField,[$relationField=>$relationValue]);
+
+        $this->delete($table,[($sourceTable.'_'.$sourceField)=>$sourceValue]);
+
+        foreach ($sourceData as $sourceDatum) {
+            foreach ($relationData as $relationDatum) {
+                $this->insert($table,[
+                    ($sourceTable.'_'.$sourceField)=>$sourceDatum,
+                    ($relationTable.'_'.$relationField)=>$relationDatum,
+                ]);
+            }
+        }
+
+        $this->throwError();
+
+        return true;
     }
 
     public function updateByEntity($data, $where = null){
