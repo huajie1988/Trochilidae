@@ -1,21 +1,11 @@
 {
   "default":{
-    "dbtype":"mysql",
-    "dbhost": "localhost",
-    "dbname": "trochilidae",
-    "dbuser": "root",
-    "dbpass": "",
-    "dbport":"3306",
-    "prefix":"",
-    "charset":"utf8"
-  },
-  "test":{
-    "dbtype":"mysql",
-    "dbhost": "localhost",
-    "dbname": "test",
-    "dbuser": "root",
-    "dbpass": "",
-    "dbport":"3306",
+    "dbtype":"yourdbtype",
+    "dbhost": "yourdbhost",
+    "dbname": "yourdbname",
+    "dbuser": "yourdbuser",
+    "dbpass": "yourdbpassword",
+    "dbport":"yourdbport",
     "prefix":"",
     "charset":"utf8"
   }

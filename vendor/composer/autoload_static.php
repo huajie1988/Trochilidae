@@ -29,10 +29,6 @@ class ComposerStaticInit6b224f4d7dc9173f88dab7a0162e3ed9
         array (
             'HomeBundle\\' => 11,
         ),
-        'A' => 
-        array (
-            'AdminBundle\\' => 12,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -63,10 +59,6 @@ class ComposerStaticInit6b224f4d7dc9173f88dab7a0162e3ed9
         'HomeBundle\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/HomeBundle',
-        ),
-        'AdminBundle\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/src/AdminBundle',
         ),
     );
 

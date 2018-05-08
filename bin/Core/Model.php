@@ -106,8 +106,7 @@ class Model extends Medoo
         $relationKey=current(array_keys($relationData));
         $sourceValue=$sourceData[$sourceKey];
         $relationValue=$relationData[$relationKey];
-        $sourceCount=count($sourceValue);
-        $relationCount=count($relationValue);
+
         list($sourceTable,$sourceField)=Utils::explodeStringBySymbol($sourceKey,'.');
         list($relationTable,$relationField)=Utils::explodeStringBySymbol($relationKey,'.');
         $table=$sourceTable.'_'.$relationTable;

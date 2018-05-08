@@ -13,5 +13,4 @@ return array(
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Medoo\\' => array($vendorDir . '/catfan/medoo/src'),
     'HomeBundle\\' => array($baseDir . '/src/HomeBundle'),
-    'AdminBundle\\' => array($baseDir . '/src/AdminBundle'),
 );

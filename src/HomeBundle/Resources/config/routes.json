@@ -3,10 +3,5 @@
     "method": "GET",
     "path": "/",
     "target":"indexAction@HomeBundle/Controller/IndexController"
-  },
-  "test": {
-    "method": "GET",
-    "path": "/test/id/\\d+",
-    "target":"testAction@HomeBundle/Controller/IndexController"
   }
 }

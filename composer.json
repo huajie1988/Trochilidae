@@ -22,8 +22,7 @@
     "autoload": {
         "psr-4": {
             "Trochilidae\\bin\\": "bin/",
-            "HomeBundle\\": "src/HomeBundle/",
-            "AdminBundle\\": "src/AdminBundle/"
+            "HomeBundle\\": "src/HomeBundle/"
         }
     },
     "repositories": {
