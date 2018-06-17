@@ -35,6 +35,10 @@
                 case 'bool':
                     $value=boolval($value);
                     break;
+                case 'url':
+                    $value=preg_match('!https?://([^\s]+\.)+\w+(/[^\s&?=]+)*/?(\?[^\s]+=[^\s]+(&[^\s]+=[^\s]+)?)?!',$value,$match);
+                    $value=$value===0?false:$match[0];
+                    break;
                 default:
                     $value=htmlspecialchars(strip_tags($value));
             }
