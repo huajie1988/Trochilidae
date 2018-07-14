@@ -88,6 +88,50 @@ class Http
         echo $content;
     }
 
+    public static function request($url,$method='GET',$request_data=[],$headers=[],$ssl_config=[]){
+        $curl = curl_init();
+        //设置抓取的url
+        curl_setopt($curl, CURLOPT_URL, $url);
+
+        //设置获取的信息以文件流的形式返回，而不是直接输出。
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        if(!empty($headers)){
+            curl_setopt($curl,CURLOPT_HTTPHEADER,$headers);
+        }
+
+        if(isset($ssl_config['verifyhost']))
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, $ssl_config['verifyhost']); // 从证书中检查SSL加密算法是否存在
+        if(isset($ssl_config['verifypeer']))
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $ssl_config['verifypeer']); // 对认证证书来源的检查
+
+
+        switch($method) {
+            case 'GET':
+                break;
+            case 'POST':
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $request_data);
+                break;
+            case 'PUT':
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $request_data);
+                break;
+            case 'DELETE':
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+                break;
+        }
+
+        //执行命令
+        $response  = curl_exec($curl);
+//        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        //关闭URL请求
+        curl_close($curl);
+
+        return $response;
+    }
+
     public function setHeader($key,$value,$replace=true){
         $key = str_replace('_', '-', strtolower($key));
         $value = array_values((array) $value);

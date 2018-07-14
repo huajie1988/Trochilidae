@@ -8,12 +8,13 @@
 namespace HomeBundle\Controller;
 
 use Trochilidae\bin\Core\Controller;
+use Trochilidae\bin\Lib\Http;
 
 
 class IndexController extends Controller
 {
 
     public function indexAction(){
-        $this->render('index.html.twig@HomeBundle:Index',['projectName'=>'Trochilidae']);}
-
+        $this->render('index.html.twig@HomeBundle:Index',['projectName'=>'Trochilidae']);
+    }
 }

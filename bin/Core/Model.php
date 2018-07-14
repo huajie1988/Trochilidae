@@ -22,7 +22,6 @@ class Model extends Medoo
         $database=current((array)Config::getConfig('database'));
         $this->entity=new Entity();
         $options=$this::switchDataBase($database,$otherOptions);
-
         parent::__construct($options);
 
         $reflection = new \ReflectionClass($this);
@@ -31,19 +30,9 @@ class Model extends Medoo
 
     }
 
-    public static function switchDataBase($database,$otherOptions){
+    public static function switchDataBase($database,$otherOptions=[]){
 
-
-        $options=[
-            'database_type'=>$database->dbtype,
-            'database_name'=>$database->dbname,
-            'server'=>$database->dbhost,
-            'username'=>$database->dbuser,
-            'password'=>$database->dbpass,
-            'port'=>$database->dbport,
-            'prefix'=>$database->prefix,
-            'charset'=>$database->charset,
-        ];
+        $options=(array)$database;
 
         if($otherOptions!=null){
             foreach ($otherOptions as $key=>$otherOption) {

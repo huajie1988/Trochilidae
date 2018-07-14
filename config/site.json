@@ -1,5 +1,6 @@
 {
   "view_mid_path": "/Resources/views",
+  "mapping_path": "/Resources/Mapping",
   "cookie_expire": 86400,
   "cookie_path": "/",
   "cookie_prefix": "",
