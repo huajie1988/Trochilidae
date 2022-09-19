@@ -40,7 +40,7 @@ class CreateEntityByJSON implements CreateEntityFactoryInterface
         $entityClassText.=PHP_EOL;
         foreach ($entityJson as $field => $info) {
             $fieldList=explode('_',$field);
-            $fields='';
+            $fields=[];
             foreach ($fieldList as $item) {
                 $fields[]=ucfirst($item);
             }
@@ -48,6 +48,7 @@ class CreateEntityByJSON implements CreateEntityFactoryInterface
                 continue;
             }
             $fieldName=join('',$fields);
+
             $entityClassText.="\t".'public function get'.$fieldName.'(){'.PHP_EOL."\t\t".'return $this->'.$field.';'.PHP_EOL."\t".'}'.PHP_EOL;
             $entityClassText.=PHP_EOL;
             $entityClassText.="\t".'public function set'.$fieldName.'($'.$field.'){'.PHP_EOL."\t\t".'$this->'.$field.' = $'.$field.';'.PHP_EOL."\t".'}'.PHP_EOL;

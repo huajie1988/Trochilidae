@@ -19,11 +19,16 @@ class Route
    private $pathInfo="/";
    private $_get=[];
    private $_post=[];
-
+   private $_server=[];
+   private $_header=[];
+   private $_json=[];
    public function __construct(){
        $this->method=$_SERVER['REQUEST_METHOD'];
        $this->_get=$_GET;
        $this->_post=$_POST;
+       $this->_server=$_SERVER;
+       $this->_header=$this->getHeader();
+       $this->_json=$this->getJSON();
        if(isset($_SERVER['PATH_INFO'])){
            $this->pathInfo=$_SERVER['PATH_INFO'];
            $pathInfo=explode('/',trim($this->pathInfo,'/'));
@@ -55,6 +60,10 @@ class Route
 
         $routeTable=file_get_contents($fileName);
         return json_decode($routeTable);
+   }
+
+   public function getPathInfo(){
+       return $this->pathInfo;
    }
 
    public function getAction(){
@@ -104,6 +113,35 @@ class Route
 
    }
 
+    function getHeader() {
+        $headers = array();
+        foreach ($_SERVER as $key => $value) {
+            if ('HTTP_' == substr($key, 0, 5)) {
+                $headers[str_replace('_', '-', substr($key, 5))] = $value;
+            }
+            if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
+                $header['AUTHORIZATION'] = $_SERVER['PHP_AUTH_DIGEST'];
+            } elseif (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+                $header['AUTHORIZATION'] = base64_encode($_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW']);
+            }
+            if (isset($_SERVER['CONTENT_LENGTH'])) {
+                $header['CONTENT-LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+            }
+            if (isset($_SERVER['CONTENT_TYPE'])) {
+                $header['CONTENT-TYPE'] = $_SERVER['CONTENT_TYPE'];
+            }
+        }
+        return $headers;
+    }
+
+   public function getJSON($isArray=true){
+       $res=false;
+       if(strtolower($_SERVER['CONTENT_TYPE'])=='application/json'){
+           $res=json_decode(file_get_contents('php://input'),$isArray);
+       }
+       return $res;
+   }
+
    private function __getParams($list,$name='',$fitter='string',$default=''){
        if(trim($name)==''){
            return $list;
@@ -125,6 +163,14 @@ class Route
 
     public function post($name='',$fitter='string',$default=''){
         return $this->__getParams($this->_post,$name,$fitter,$default);
+    }
+
+    public function header($name='',$fitter='string',$default=''){
+        return $this->__getParams($this->_header,strtoupper($name),$fitter,$default);
+    }
+
+    public function json($name='',$fitter='string',$default=''){
+        return $this->__getParams($this->_json,$name,$fitter,$default);
     }
 
 }

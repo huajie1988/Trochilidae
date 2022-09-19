@@ -155,8 +155,8 @@ class Entity
         ];
         foreach ($tps as $tp) {
             preg_match_all($tp,$sql,$matchs);
-            foreach ($matchs[0] as $match) {
 
+            foreach ($matchs[0] as $match) {
                 $tr=eval(preg_replace($tpls,$trls,$match));
                 $sql=str_replace($match,$tr,$sql);
             }
@@ -169,7 +169,7 @@ class Entity
         ];
     }
 
-    public function doMapping($mappingId,$params){
+    public function doMapping($mappingId,$params,$fetch_style=0){
         $mappingSql=$this->getMappingSql($mappingId,$params);
         $sql=$mappingSql['sql'];
         $db=$mappingSql['db'];
@@ -180,13 +180,24 @@ class Entity
         }else{
             $db=$dbConfig[$db];
         }
+        $fetch_result=\PDO::FETCH_ASSOC;
+        if($fetch_style==1){
+            $fetch_result=\PDO::FETCH_NUM;
+        }else if ($fetch_style==2){
+            $fetch_result=\PDO::FETCH_BOTH;
+        }
         $db=Model::switchDataBase($db);
         $model=new Model($db);
 
         if(preg_match('!^SELECT!i',trim($sql))){
-            return $model->query($sql)->fetchAll();
+            return $model->query($sql)->fetchAll($fetch_result);
         }else{
-            return $model->query($sql)->rowCount();
+            if (preg_match('!^INSERT!i',trim($sql))){
+                $model->query($sql);
+                return $model->id();
+            }
+            else
+                return $model->query($sql)->rowCount();
         }
 
     }
