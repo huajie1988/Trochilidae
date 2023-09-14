@@ -136,7 +136,8 @@ class Route
 
    public function getJSON($isArray=true){
        $res=false;
-       if(strtolower($_SERVER['CONTENT_TYPE'])=='application/json'){
+
+       if(isset($_SERVER['CONTENT_TYPE']) && strtolower($_SERVER['CONTENT_TYPE'])=='application/json'){
            $res=json_decode(file_get_contents('php://input'),$isArray);
        }
        return $res;

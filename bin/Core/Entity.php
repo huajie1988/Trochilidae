@@ -19,6 +19,23 @@ class Entity
     private $model;
     private $dbConfig=[];
     private $modelInstance=null;
+    private static $instance;
+
+    private function __construct(){
+
+    }
+
+    private function __clone(){
+        // TODO: Implement __clone() method.
+    }
+
+    public static function getInstance(){
+        if (!(self::$instance instanceof self)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     public function get($target){
         if(strstr('@',$target)){
             throw new \Exception('The  '.$target.' incorrectly formatting');
@@ -33,7 +50,16 @@ class Entity
         }
         $this->entity=$bundleName.'\\Entity\\'.ucfirst($entityName);
         $this->model=$bundleName.'\\Model\\'.ucfirst($entityName).'Model';
+        $this->modelInstance=null;
         return $this;
+    }
+
+    public function copy(){
+        $newInstance=new Entity();
+        $newInstance->model=$this->model;
+        $newInstance->entity=$this->entity;
+        $newInstance->modelInstance=$this->modelInstance;
+        return $newInstance;
     }
 
     public function create(){
@@ -48,6 +74,7 @@ class Entity
         if($this->modelInstance==null)
             $this->modelInstance=Ioc::getInstance($this->model,$this->dbConfig);
         $instance=$this->modelInstance;
+
         if(!method_exists($instance,$name)){
             $ret = Ioc::make($instance,$this->model,$name,$arguments);
             $ret = $this->ArroytoEntity($ret);
@@ -61,12 +88,12 @@ class Entity
 
     public function ArroytoEntity($result,$entity=null){
 
-        if($this->entity==null){
+        if($this->entity==null && $entity==null){
             throw new \Exception('The entity is null');
             exit();
         }
 
-        if($entity==null)
+        if($entity==null && $this->entity!=null)
             $entity=$this->entity;
 
         $instance=Ioc::getInstance($entity);
@@ -155,8 +182,8 @@ class Entity
         ];
         foreach ($tps as $tp) {
             preg_match_all($tp,$sql,$matchs);
-
             foreach ($matchs[0] as $match) {
+
                 $tr=eval(preg_replace($tpls,$trls,$match));
                 $sql=str_replace($match,$tr,$sql);
             }
@@ -203,18 +230,24 @@ class Entity
     }
 
     public function beginTransaction(){
-
         if($this->modelInstance==null)
             $this->modelInstance=Ioc::getInstance($this->model,$this->dbConfig);
-        $this->modelInstance->pdo->beginTransaction();
+        $this->modelInstance->getModelSingleton()->pdo->beginTransaction();
+        return $this->modelInstance;
     }
 
-    public function commit(){
-        $this->modelInstance->pdo->commit();
+    public function commit($modelInstance=null){
+        if ($modelInstance!=null)
+            $modelInstance->pdo->commit();
+        else
+            $this->modelInstance->getModelSingleton()->pdo->commit();
     }
 
-    public function rollback(){
-        $this->modelInstance->pdo->rollback();
+    public function rollback($modelInstance=null){
+        if ($modelInstance!=null)
+            $modelInstance->pdo->rollback();
+        else
+            $this->modelInstance->getModelSingleton()->pdo->rollback();
     }
 
 }

@@ -29,16 +29,16 @@
                     $start_time = microtime(true);
 
                     self::$logger->pushHandler(new StreamHandler($storagePath.'/'.date('YmdH').'.log', Logger::INFO));
-                    self::$logger->addInfo('Main process start');
+                    self::$logger->info('Main process start');
                     self::process();
                     $end_time = microtime(true);
-                    self::$logger->addInfo('Main process stop',['executionTime(ms)'=>($end_time-$start_time)*1000]);
+                    self::$logger->info('Main process stop',['executionTime(ms)'=>($end_time-$start_time)*1000]);
                 }else{
 		            try{
                         self::process();
                     }catch (\Exception $e){
                         self::$logger->pushHandler(new StreamHandler($storagePath.'/'.date('YmdH').'.log', Logger::ERROR));
-                        self::$logger->addError($e);
+                        self::$logger->error($e);
                     }
                 }
 		}

@@ -12,7 +12,7 @@ namespace Trochilidae\bin\Core;
 use Trochilidae\bin\Common\Utils;
 use Trochilidae\bin\Lib\Http;
 use Trochilidae\bin\Lib\Ioc;
-
+use Twig;
 class Controller
 {
    protected $request=null;
@@ -81,8 +81,8 @@ class Controller
            $tplFile='/'.$pathInfo['basename'];
        }
 
-        $loader = new \Twig_Loader_Filesystem($tplPath);
-        $twig = new \Twig_Environment($loader, array(
+        $loader = new Twig\Loader\FilesystemLoader($tplPath);
+        $twig = new Twig\Environment($loader, array(
             'cache' => TROCHI.'/storage/framework/twig',
             'debug'=>DEBUG
         ));

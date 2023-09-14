@@ -11,22 +11,30 @@ namespace Trochilidae\bin\Core;
 
 use Medoo\Medoo;
 use Trochilidae\bin\Common\Utils;
+use Trochilidae\bin\Lib\ModelSingleton;
 
-class Model extends Medoo
+class Model
 {
     private $table;
     private $entity;
+    private $modelSingleton;
     public function __construct($otherOptions = null)
     {
 
         $database=current((array)Config::getConfig('database'));
-        $this->entity=new Entity();
+
         $options=$this::switchDataBase($database,$otherOptions);
-        parent::__construct($options);
+        $this->modelSingleton=ModelSingleton::getInstance($options);
+
 
         $reflection = new \ReflectionClass($this);
         $class=explode('\\',$reflection->getName());
-        $this->table=str_replace('Model','',$class[count($class)-1]);
+        $doc=$reflection->getDocComment();
+        preg_match('!@Table\s+(.+)\s+!',$doc,$match);
+        if(isset($match[1])){
+            $this->table=trim($match[1]);
+        }else
+            $this->table=str_replace('Model','',$class[count($class)-1]);
 
     }
 
@@ -44,8 +52,9 @@ class Model extends Medoo
     }
 
     private function throwError(){
-        $error=$this->error();
-        if($error[1]!=''){
+        $error=$this->modelSingleton->errorInfo;
+
+        if($error!==null){
             throw new \Exception("The SQL ".$this->last().' is error,error code is '.$error[0].' error msg is '.$error[count($error)-1]);
             exit();
         }
@@ -53,32 +62,61 @@ class Model extends Medoo
 
     public function __call($name, $arguments)
     {
-        $arguments=current($arguments);
-
+        $result=true;
         if(preg_match('!findBy(\w+)!',$name,$match)){
+            $arguments=current($arguments);
+
             if(!is_array($arguments)){
                 $arguments=[strtolower($match[1])=>$arguments];
             }
+            $result = current($this->__find($arguments));
         }
 
-        $result = current($this->__find($arguments));
+        if(preg_match('!updateBy(\w+)!',$name,$match)){
+            $where=[strtolower($match[1])=>$arguments[0]];
+            $result=$this->__update($arguments[1],$where);
+            $result = is_array($result)?current($result):$result;
+        }
+
+        if(preg_match('!delBy(\w+)!',$name,$match)){
+            $arguments=current($arguments);
+
+            if(!is_array($arguments)){
+                $arguments=[strtolower($match[1])=>$arguments];
+            }
+            $result = $this->__del($arguments);
+            $result = is_array($result)?current($result):$result;
+        }
 
         $this->throwError();
+
         if($result==false)
             $result=null;
         return $result;
     }
 
+    public function add($data){
+        return $this->modelSingleton->insert($this->table,$data);
+    }
+
+    public function __update($data,$where){
+        return $this->modelSingleton->update($this->table,$data,$where);
+    }
+
     public function __find($where){
-        return $this->select($this->table,'*',$where);
+        return $this->modelSingleton->select($this->table,'*',$where);
+    }
+
+    public function __del($where){
+        return $this->modelSingleton->delete($this->table,$where);
     }
 
     public function find($col,$where,$join=null){
 
         if($join==null){
-            $ret=$this->select($this->table,$col,$where);
+            $ret=$this->modelSingleton->select($this->table,$col,$where);
         }else{
-            $ret=$this->select($this->table,$join,$col,$where);
+            $ret=$this->modelSingleton->select($this->table,$join,$col,$where);
         }
         $this->throwError();
 
@@ -87,6 +125,10 @@ class Model extends Medoo
 
     public function findOne($col,$where,$join=null){
         return current($this->find($col,$where,$join));
+    }
+
+    public function getTable(){
+        return $this->table;
     }
 
     public function updateRelationEntity($sourceData,$relationData){
@@ -100,14 +142,14 @@ class Model extends Medoo
         list($relationTable,$relationField)=Utils::explodeStringBySymbol($relationKey,'.');
         $table=$sourceTable.'_'.$relationTable;
         //fitter some do not find data
-        $sourceData=$this->select($sourceTable,$sourceField,[$sourceField=>$sourceValue]);
-        $relationData=$this->select($relationTable,$relationField,[$relationField=>$relationValue]);
+        $sourceData=$this->modelSingleton->select($sourceTable,$sourceField,[$sourceField=>$sourceValue]);
+        $relationData=$this->modelSingleton->select($relationTable,$relationField,[$relationField=>$relationValue]);
 
-        $this->delete($table,[($sourceTable.'_'.$sourceField)=>$sourceValue]);
+        $this->modelSingleton->delete($table,[($sourceTable.'_'.$sourceField)=>$sourceValue]);
 
         foreach ($sourceData as $sourceDatum) {
             foreach ($relationData as $relationDatum) {
-                $this->insert($table,[
+                $this->modelSingleton->insert($table,[
                     ($sourceTable.'_'.$sourceField)=>$sourceDatum,
                     ($relationTable.'_'.$relationField)=>$relationDatum,
                 ]);
@@ -121,8 +163,10 @@ class Model extends Medoo
 
     public function updateByEntity($data, $where = null){
         $oldData=$this->findOne('*',$where);
-        $data=$this->entity->EntityToArray($data);
-        $data=array_diff_assoc($data,$oldData);
+        if ($oldData===false) return 0;
+        $entity=Entity::getInstance();
+        $data=$entity->EntityToArray($data);
+        $data=array_diff($data,$oldData);
         if(empty($data))
             return 0;
         $ret  = parent::update($this->table, $data, $where); // TODO: Change the autogenerated stub
@@ -132,10 +176,11 @@ class Model extends Medoo
     }
 
     public function insertByEntity($datas){
-        $datas=$this->entity->EntityToArray($datas);
+        $entity=Entity::getInstance();
+        $datas=$entity->EntityToArray($datas);
         parent::insert($this->table, $datas); // TODO: Change the autogenerated stub
         $this->throwError();
-        return $this->id();
+        return $this->modelSingleton->id();
     }
 
     public function deleteByEntity($where){
@@ -144,4 +189,7 @@ class Model extends Medoo
         return $ret;
     }
 
+    public function getModelSingleton(){
+        return $this->modelSingleton;
+    }
 }
